@@ -47,7 +47,7 @@
   :type 'string
   :group 'counsel-mu4e)
 
-(defcustom counsel-mu4e-flags "-n 5 --skip-dups --sortfield=date"
+(defcustom counsel-mu4e-flags "-n 500 --skip-dups --sortfield=date"
   "Path to mu4e executable."
   :type 'string
   :group 'counsel-mu4e)
