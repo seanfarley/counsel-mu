@@ -47,7 +47,7 @@
   :type 'string
   :group 'counsel-mu4e)
 
-(defcustom counsel-mu4e-flags "-n 5 --skip-dups"
+(defcustom counsel-mu4e-flags "-n 5 --skip-dups --sortfield=date"
   "Path to mu4e executable."
   :type 'string
   :group 'counsel-mu4e)
@@ -75,12 +75,20 @@
 (defvar counsel-mu4e-history nil
   "History for `counsel-mu4e'.")
 
+;; the delimiter used in the --fields string only looks like two spaces; it
+;; is actually U+205F (MEDIUM MATHEMATICAL SPACE) followed by U+2006
+;; (SIX-PER-EM SPACE) in the hope that no one has those two characters in a
+;; row in their subject
+(defvar counsel-mu4e-delimiter "  "
+  "Delimiter for fields in mu output.")
+
 (defun counsel-mu4e-cmd (input)
   "Form mu4e query command using INPUT."
   (counsel-require-program counsel-mu4e-path)
-  (format "%s find %s --format sexp --nocolor %s"
+  (format "%s find %s --fields 'i%ss' --nocolor %s"
           counsel-mu4e-path
           counsel-mu4e-flags
+          counsel-mu4e-delimiter
           (shell-quote-argument input)))
 
 (defun counsel-mu4e--parse (str pos)
@@ -190,14 +198,13 @@ Update the minibuffer with the amount of lines collected every
   (if (< (length input) 3)
       (counsel-more-chars 3)
     (counsel--async-command
-     (counsel-mu4e-cmd input)
-     'counsel--mu4e-async-sentinel
-     'counsel--mu4e-process-filter)
+     (counsel-mu4e-cmd input))
     '("" "working...")))
 
 (defun counsel-mu4e-action-show (sexp)
   "Open resulting SEXP in ‘mu4e-show’ view."
-  (mu4e-view-message-with-message-id (plist-get (car (counsel-mu4e--parse sexp 0)) :message-id)))
+  (mu4e-view-message-with-message-id
+   (car (split-string sexp counsel-mu4e-delimiter))))
 
 (defun counsel-mu4e--get-match-face (needle haystack)
   "Return the nth match face if NEEDLE is in HAYSTACK.
@@ -209,17 +216,16 @@ Otherwise return default face."
                     (1- (length ivy-minibuffer-faces))))
            ivy-minibuffer-faces))))
 
-(defun counsel-mu4e-transformer (sexp)
-  "Transform SEXP to mu4e display style."
-  (let ((sexp (counsel-mu4e--parse-single sexp)))
-    (when (and sexp
-               (plist-get sexp :docid))
+(defun counsel-mu4e-transformer (str)
+  "Transform STR to mu4e display style."
+  (let ((fields (split-string str counsel-mu4e-delimiter)))
+    (when (> (length fields) 1)
       (let* ((keys (mapcar (lambda (i) (downcase i)) (split-string ivy-text)))
              (subject (string-join (mapcar (lambda (i)
                                              (propertize i 'face
                                                          (counsel-mu4e--get-match-face
                                                           (downcase i) keys)))
-                                           (split-string (plist-get sexp :subject)))
+                                           (split-string (nth 1 fields)))
                                    " ")))
         (format "%s" subject)))))
 
