@@ -53,7 +53,7 @@
   :group 'counsel-mu4e)
 
 (defface counsel-mu4e-date-face
-  '((t :inherit mu4e-header-face :background nil))
+  '((t :inherit mu4e-header-value-face :background nil))
   "Default face used in tree mode face for matching messages"
   :group 'counsel-mu4e)
 
