@@ -230,7 +230,8 @@ Otherwise return default face."
                                            (split-string (nth 3 fields)))
                                    " "))
              (date (propertize (nth 1 fields) 'face 'counsel-mu4e-date-face))
-        (format "%s %s" date subject)))))
+             (people (propertize (nth 2 fields) 'face 'counsel-mu4e-people-face)))
+        (format "%s %s %s" date people subject)))))
 
 ;;;###autoload
 (defun counsel-mu4e (&optional initial-input)
