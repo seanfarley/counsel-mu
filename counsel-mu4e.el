@@ -85,9 +85,11 @@
 (defun counsel-mu4e-cmd (input)
   "Form mu4e query command using INPUT."
   (counsel-require-program counsel-mu4e-path)
-  (format "%s find %s --fields 'i%ss' --nocolor %s"
+  (format "%s find %s --fields 'i%sd%sf%ss' --nocolor %s"
           counsel-mu4e-path
           counsel-mu4e-flags
+          counsel-mu4e-delimiter
+          counsel-mu4e-delimiter
           counsel-mu4e-delimiter
           (shell-quote-argument input)))
 
@@ -225,9 +227,10 @@ Otherwise return default face."
                                              (propertize i 'face
                                                          (counsel-mu4e--get-match-face
                                                           (downcase i) keys)))
-                                           (split-string (nth 1 fields)))
-                                   " ")))
-        (format "%s" subject)))))
+                                           (split-string (nth 3 fields)))
+                                   " "))
+             (date (propertize (nth 1 fields) 'face 'counsel-mu4e-date-face))
+        (format "%s %s" date subject)))))
 
 ;;;###autoload
 (defun counsel-mu4e (&optional initial-input)
