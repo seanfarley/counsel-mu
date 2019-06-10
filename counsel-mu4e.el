@@ -3,7 +3,7 @@
 ;; Copyright (C) 2018  Sean Farley
 
 ;; Author: Sean Farley <sean@farley.io>
-;; URL: https://bitbucket.org/seanfarley/counsel-mu4e
+;; URL: https://github.com/seanfarley/counsel-mu4e
 ;; Keywords: mail
 ;; Version: 0.1
 ;; Package-Requires: ((emacs "24") (ivy "0.10.0") (mu4e "0.21"))
