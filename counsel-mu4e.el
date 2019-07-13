@@ -6,7 +6,7 @@
 ;; URL: https://github.com/seanfarley/counsel-mu4e
 ;; Keywords: mail
 ;; Version: 0.1
-;; Package-Requires: ((emacs "24") (ivy "0.10.0") (mu4e "0.21"))
+;; Package-Requires: ((emacs "24.4") (ivy "0.10.0") (mu4e "0.21"))
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -96,7 +96,7 @@
 (defun counsel-mu4e-function (input)
   "Get mail from mu4e using INPUT."
   (if (< (length input) 3)
-      (counsel-more-chars 3)
+      (ivy-more-chars)
     (counsel--async-command
      (counsel-mu4e-cmd input))
     '("" "working...")))
